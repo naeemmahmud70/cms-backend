@@ -24,11 +24,16 @@ async function run() {
     //database collections
     const db = client.db("brainaliveOfficial");
     const blogsCollections = db.collection("blogsCollections");
+    const draftsCollections = db.collection("draftsCollections");
+    const archivesCollections = db.collection("archiveCollections");
+    const messageCollection = db.collection("contactMessages");
 
     // Importing routes and passing the collections
     const blogsRoutes = require("./routes/blogs")(blogsCollections);
+    const draftsRoutes = require("./routes/drafts")(draftsCollections);
 
     app.use("/api", blogsRoutes);
+    app.use("/api", draftsRoutes);
   } catch (error) {
     console.error("Database connection failed:", error.message);
     process.exit(1);
