@@ -21,6 +21,14 @@ async function run() {
   try {
     await client.connect();
     console.log("Database connected successfully");
+    //database collections
+    const db = client.db("brainaliveOfficial");
+    const blogsCollections = db.collection("blogsCollections");
+
+    // Importing routes and passing the collections
+    const blogsRoutes = require("./routes/blogs")(blogsCollections);
+
+    app.use("/api", blogsRoutes);
   } catch (error) {
     console.error("Database connection failed:", error.message);
     process.exit(1);
