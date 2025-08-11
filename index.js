@@ -31,9 +31,11 @@ async function run() {
     // Importing routes and passing the collections
     const blogsRoutes = require("./routes/blogs")(blogsCollections);
     const draftsRoutes = require("./routes/drafts")(draftsCollections);
+    const archivesRoutes = require("./routes/archives")(archivesCollections);
 
     app.use("/api", blogsRoutes);
     app.use("/api", draftsRoutes);
+    app.use("/api", archivesRoutes);
   } catch (error) {
     console.error("Database connection failed:", error.message);
     process.exit(1);
