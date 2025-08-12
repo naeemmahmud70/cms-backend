@@ -3,6 +3,7 @@ const cors = require("cors");
 const helmet = require("helmet");
 require("dotenv").config();
 const { MongoClient } = require("mongodb");
+const authMiddleware = require("./middleware/authMiddleware");
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -21,21 +22,24 @@ async function run() {
   try {
     await client.connect();
     console.log("Database connected successfully");
+
     //database collections
     const db = client.db("brainaliveOfficial");
+    const usersCollection = db.collection("users");
     const blogsCollections = db.collection("blogsCollections");
     const draftsCollections = db.collection("draftsCollections");
     const archivesCollections = db.collection("archiveCollections");
-    const messageCollection = db.collection("contactMessages");
 
     // Importing routes and passing the collections
+    const authRoutes = require("./routes/auth")(usersCollection);
     const blogsRoutes = require("./routes/blogs")(blogsCollections);
     const draftsRoutes = require("./routes/drafts")(draftsCollections);
     const archivesRoutes = require("./routes/archives")(archivesCollections);
 
-    app.use("/api", blogsRoutes);
-    app.use("/api", draftsRoutes);
-    app.use("/api", archivesRoutes);
+    app.use("/api/auth", authRoutes);
+    app.use("/api", authMiddleware, blogsRoutes);
+    app.use("/api", authMiddleware, draftsRoutes);
+    app.use("/api", authMiddleware, archivesRoutes);
   } catch (error) {
     console.error("Database connection failed:", error.message);
     process.exit(1);
