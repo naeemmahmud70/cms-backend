@@ -3,38 +3,54 @@ const router = express.Router();
 const { ObjectId } = require("mongodb");
 
 module.exports = (archivesCollections) => {
-  // Add archive
-  router.post("/addArchive", async (req, res) => {
+  // Create a new archive
+  router.post("/archives", async (req, res) => {
     try {
       const newArchive = req.body;
       const result = await archivesCollections.insertOne(newArchive);
-      res.send(result);
+
+      res.status(201).json({
+        message: "Archive has been created successfully.",
+        archiveId: result.insertedId,
+      });
     } catch (error) {
-      res.status(500).send({ message: "Failed to add archive", error });
+      console.error("Error creating archive:", error);
+      res.status(500).json({ message: "Internal server error" });
     }
   });
 
   // Get all archives
-  router.get("/getAllArchive", async (req, res) => {
+  router.get("/archives", async (req, res) => {
     try {
       const archives = await archivesCollections.find().toArray();
-      res.send(archives);
+      res.status(200).json({
+        message: "Archives fetched successfully.",
+        archives,
+      });
     } catch (error) {
-      res.status(500).send({ message: "Failed to fetch archives", error });
+      console.error("Error fetching archives:", error);
+      res.status(500).json({ message: "Internal server error" });
     }
   });
 
   // Delete archive
-  router.delete("/archive/delete/:id", async (req, res) => {
+  router.delete("/archives/:id", async (req, res) => {
     try {
       const result = await archivesCollections.deleteOne({
         _id: ObjectId(req.params.id),
       });
-      res.send(result);
+
+      if (result.deletedCount === 0) {
+        return res.status(404).json({ message: "Archive not found" });
+      }
+
+      res.status(200).json({
+        message: "Archive deleted successfully.",
+      });
     } catch (error) {
-      res.status(500).send({ message: "Failed to delete archive", error });
+      console.error("Error deleting archive:", error);
+      res.status(500).json({ message: "Internal server error" });
     }
   });
-
   return router;
 };

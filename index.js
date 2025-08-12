@@ -32,7 +32,7 @@ async function run() {
 
     // Importing routes and passing the collections
     const authRoutes = require("./routes/auth")(usersCollection);
-    const blogsRoutes = require("./routes/blogs")(articlesCollections);
+    const blogsRoutes = require("./routes/articles")(articlesCollections);
     const draftsRoutes = require("./routes/drafts")(draftsCollections);
     const archivesRoutes = require("./routes/archives")(archivesCollections);
 
