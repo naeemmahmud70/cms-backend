@@ -3,6 +3,7 @@ const router = express.Router();
 const { ObjectId } = require("mongodb");
 
 module.exports = (articlesCollections) => {
+  
   router.post("/articles", async (req, res) => {
     try {
       const newArticles = req.body;
