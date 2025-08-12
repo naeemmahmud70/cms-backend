@@ -2,53 +2,112 @@ const express = require("express");
 const router = express.Router();
 const { ObjectId } = require("mongodb");
 
+module.exports = (articlesCollections) => {
+  router.post("/articles", async (req, res) => {
+    try {
+      const newArticles = req.body;
+      const result = await articlesCollections.insertOne(newArticles);
 
-module.exports = (blogsCollections) => {
-  router.post("/allBlogs", async (req, res) => {
-    const newBlog = req.body;
-    const result = await blogsCollections.insertOne(newBlog);
-    res.send(result);
+      res.status(201).json({
+        message: "Article has been created successfully.",
+        articleId: result.insertedId,
+      });
+    } catch (error) {
+      console.error("Error creating article:", error);
+      res.status(500).json({ message: "Internal server error" });
+    }
   });
 
-  router.get("/getAllBlogs", async (req, res) => {
-    const blogs = await blogsCollections.find().toArray();
-    res.send(blogs);
+  router.get("/articles", async (req, res) => {
+    try {
+      const articles = await articlesCollections.find().toArray();
+
+      res.status(200).json({
+        message: "Articles retrieved successfully.",
+        total: articles.length,
+        articles: articles,
+      });
+    } catch (error) {
+      console.error("Error retrieving articles:", error);
+      res.status(500).json({ message: "Internal server error" });
+    }
   });
 
-  router.get("/blog/:title", async (req, res) => {
-    const decodedTitle = decodeURIComponent(req.params.title);
-    const blog = await blogsCollections.findOne({ blogTitle: decodedTitle });
-    res.send(blog || {});
-  });
+  router.get("/articles/:title", async (req, res) => {
+    try {
+      const decodedTitle = decodeURIComponent(req.params.title);
+      const article = await articlesCollections.findOne({
+        blogTitle: decodedTitle,
+      });
 
-  router.get("/blog/edit/:id", async (req, res) => {
-    const blog = await blogsCollections.findOne({
-      _id: ObjectId(req.params.id),
-    });
-    res.send(blog);
-  });
-
-  router.patch("/updateBlog/:id", async (req, res) => {
-    const newBlogData = req.body.updatedBlog;
-    const result = await blogsCollections.updateOne(
-      { _id: ObjectId(req.params.id) },
-      {
-        $set: {
-          coverImg: newBlogData.coverImg,
-          blogTitle: newBlogData.blogTitle,
-          tag: newBlogData.tag,
-          blogContent: newBlogData.blogContent,
-        },
+      if (!article) {
+        return res.status(404).json({
+          message: "Article not found.",
+        });
       }
-    );
-    res.send(result);
+
+      res.status(200).json({
+        message: "Article retrieved successfully.",
+        article,
+      });
+    } catch (error) {
+      console.error("Error retrieving article:", error);
+      res.status(500).json({ message: "Internal server error" });
+    }
   });
 
-  router.delete("/blog/delete/:id", async (req, res) => {
-    const result = await blogsCollections.deleteOne({
-      _id: ObjectId(req.params.id),
-    });
-    res.send(result);
+  router.patch("/articles/:id", async (req, res) => {
+    try {
+      const { updatedArticle } = req.body;
+
+      const result = await articlesCollections.updateOne(
+        { _id: ObjectId(req.params.id) },
+        {
+          $set: {
+            coverImg: updatedArticle.coverImg,
+            blogTitle: updatedArticle.blogTitle,
+            tag: updatedArticle.tag,
+            blogContent: updatedArticle.blogContent,
+          },
+        }
+      );
+
+      if (result.matchedCount === 0) {
+        return res.status(404).json({
+          message: "Article not found.",
+        });
+      }
+
+      res.status(200).json({
+        message: "Article updated successfully!",
+        modifiedCount: result.modifiedCount,
+      });
+    } catch (error) {
+      console.error("Error updating article:", error);
+      res.status(500).json({ message: "Internal server error" });
+    }
+  });
+
+  router.delete("/articles/:id", async (req, res) => {
+    try {
+      const result = await articlesCollections.deleteOne({
+        _id: ObjectId(req.params.id),
+      });
+
+      if (result.deletedCount === 0) {
+        return res.status(404).json({
+          message: "Article not found.",
+        });
+      }
+
+      res.status(200).json({
+        message: "Article deleted successfully.",
+        deletedCount: result.deletedCount,
+      });
+    } catch (error) {
+      console.error("Error deleting article:", error);
+      res.status(500).json({ message: "Internal server error" });
+    }
   });
 
   return router;

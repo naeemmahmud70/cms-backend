@@ -26,13 +26,13 @@ async function run() {
     //database collections
     const db = client.db("brainaliveOfficial");
     const usersCollection = db.collection("users");
-    const blogsCollections = db.collection("blogsCollections");
+    const articlesCollections = db.collection("articlesCollections");
     const draftsCollections = db.collection("draftsCollections");
     const archivesCollections = db.collection("archiveCollections");
 
     // Importing routes and passing the collections
     const authRoutes = require("./routes/auth")(usersCollection);
-    const blogsRoutes = require("./routes/blogs")(blogsCollections);
+    const blogsRoutes = require("./routes/blogs")(articlesCollections);
     const draftsRoutes = require("./routes/drafts")(draftsCollections);
     const archivesRoutes = require("./routes/archives")(archivesCollections);
 
