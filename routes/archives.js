@@ -10,7 +10,7 @@ module.exports = (archivesCollections) => {
       const result = await archivesCollections.insertOne(newArchive);
 
       res.status(201).json({
-        message: "Archive has been created successfully.",
+        message: "Articles archived successfully!",
         archiveId: result.insertedId,
       });
     } catch (error) {
@@ -24,7 +24,7 @@ module.exports = (archivesCollections) => {
     try {
       const archives = await archivesCollections.find().toArray();
       res.status(200).json({
-        message: "Archives fetched successfully.",
+        message: "Archives fetched successfully!",
         archives,
       });
     } catch (error) {
@@ -41,11 +41,11 @@ module.exports = (archivesCollections) => {
       });
 
       if (result.deletedCount === 0) {
-        return res.status(404).json({ message: "Archive not found" });
+        return res.status(404).json({ message: "Archive not found!" });
       }
 
       res.status(200).json({
-        message: "Archive deleted successfully.",
+        message: "Archive deleted successfully!",
       });
     } catch (error) {
       console.error("Error deleting archive:", error);

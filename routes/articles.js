@@ -38,7 +38,7 @@ module.exports = (articlesCollections) => {
     try {
       const decodedTitle = decodeURIComponent(req.params.title);
       const article = await articlesCollections.findOne({
-        blogTitle: decodedTitle,
+        articleTitle: decodedTitle,
       });
 
       if (!article) {
@@ -66,9 +66,9 @@ module.exports = (articlesCollections) => {
         {
           $set: {
             coverImg: updatedArticle.coverImg,
-            blogTitle: updatedArticle.blogTitle,
+            articleTitle: updatedArticle.articleTitle,
             tag: updatedArticle.tag,
-            blogContent: updatedArticle.blogContent,
+            articleContent: updatedArticle.articleContent,
           },
         }
       );

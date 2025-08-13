@@ -32,12 +32,12 @@ async function run() {
 
     // Importing routes and passing the collections
     const authRoutes = require("./routes/auth")(usersCollection);
-    const blogsRoutes = require("./routes/articles")(articlesCollections);
+    const articlesRoutes = require("./routes/articles")(articlesCollections);
     const draftsRoutes = require("./routes/drafts")(draftsCollections);
     const archivesRoutes = require("./routes/archives")(archivesCollections);
 
     app.use("/api/auth", authRoutes);
-    app.use("/api", authMiddleware, blogsRoutes);
+    app.use("/api", authMiddleware, articlesRoutes);
     app.use("/api", authMiddleware, draftsRoutes);
     app.use("/api", authMiddleware, archivesRoutes);
   } catch (error) {

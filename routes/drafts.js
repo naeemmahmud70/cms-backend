@@ -38,7 +38,7 @@ module.exports = (draftCollections) => {
   router.get("/drafts/:title", async (req, res) => {
     try {
       const decodedTitle = decodeURIComponent(req.params.title);
-      const draft = await draftCollections.findOne({ blogTitle: decodedTitle });
+      const draft = await draftCollections.findOne({ articleTitle: decodedTitle });
 
       if (!draft) {
         return res.status(404).json({ message: "Draft not found" });
@@ -64,9 +64,9 @@ module.exports = (draftCollections) => {
         {
           $set: {
             coverImg: updatedDraft.coverImg,
-            blogTitle: updatedDraft.blogTitle,
+            articleTitle: updatedDraft.articleTitle,
             tag: updatedDraft.tag,
-            blogContent: updatedDraft.blogContent,
+            articleContent: updatedDraft.articleContent,
           },
         }
       );
