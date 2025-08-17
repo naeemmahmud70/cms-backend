@@ -9,16 +9,13 @@ module.exports = (usersCollection) => {
     try {
       const { name, email, password, role, createdAt } = req.body;
 
-      // Check if user already exists
       const existingUser = await usersCollection.findOne({ email });
       if (existingUser) {
         return res.status(400).send({ message: "User already exists!" });
       }
 
-      // Hash password
       const hashedPassword = await bcrypt.hash(password, 10);
 
-      // Save new user
       const result = await usersCollection.insertOne({
         name,
         email,
@@ -27,14 +24,12 @@ module.exports = (usersCollection) => {
         createdAt,
       });
 
-      // Create token for immediate login
       const token = jwt.sign(
-        { id: result.insertedId, email, role }, // You can also include role
+        { id: result.insertedId, email, role },
         process.env.JWT_SECRET,
         { expiresIn: "1d" }
       );
 
-      // Return user info + token
       res.status(201).send({
         message: "Signed up successfully!",
         token,
@@ -61,13 +56,11 @@ module.exports = (usersCollection) => {
         return res.status(400).send({ message: "Email not found!" });
       }
 
-      // Compare passwords
       const isMatch = await bcrypt.compare(password, user.password);
       if (!isMatch) {
         return res.status(400).send({ message: "Incorrect password!" });
       }
 
-      // Create JWT token
       const token = jwt.sign(
         { id: user._id, email: user.email, role: user.role },
         process.env.JWT_SECRET,
